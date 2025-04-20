@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Quản Lý Key</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .container {
+      background: #111;
+      border: 2px solid #0f0;
+      border-radius: 12px;
+      padding: 30px;
+      width: 450px;
+      text-align: center;
+      box-shadow: 0 0 20px #0f0;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: #222;
+      border: 1px solid #0f0;
+      color: #0f0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+    }
+    ul {
+      text-align: left;
+      width: 100%;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin - Quản Lý KEY Có Hạn</h2>
+    <input type="text" id="newKey" placeholder="Nhập KEY mới">
+    <input type="date" id="expireDate" placeholder="Ngày hết hạn">
+    <button onclick="themKey()">Thêm KEY</button>
+    <ul id="danhSachKey"></ul>
+  </div>
+
+  <script>
+    let danhSachKey = JSON.parse(localStorage.getItem('danhSachKey')) || [];
+
+    function themKey() {
+      const key = document.getElementById('newKey').value.trim();
+      const expires = document.getElementById('expireDate').value;
+      if (key && expires) {
+        danhSachKey.push({ key, expires });
+        luuLocalStorage();
+        hienThiDanhSach();
+        document.getElementById('newKey').value = '';
+        document.getElementById('expireDate').value = '';
+      }
+    }
+
+    function hienThiDanhSach() {
+      const ul = document.getElementById('danhSachKey');
+      ul.innerHTML = '';
+      danhSachKey.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${item.key}</strong> - Hết hạn: <em>${item.expires}</em>
+          <button onclick="xoaKey(${index})">Xoá</button>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function xoaKey(index) {
+      danhSachKey.splice(index, 1);
+      luuLocalStorage();
+      hienThiDanhSach();
+    }
+
+    function luuLocalStorage() {
+      localStorage.setItem('danhSachKey', JSON.stringify(danhSachKey));
+    }
+
+    window.onload = hienThiDanhSach;
+  </script>
+</body>
+</html>
